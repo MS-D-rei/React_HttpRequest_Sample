@@ -1,32 +1,46 @@
-import MovieList from "./components/MovieList";
-import './App.css'
+import MovieList from './components/MovieList';
+import './App.css';
+import { useState } from 'react';
+import { MovieType } from '@/components/MovieType';
+import { SWAPIType, SWAPIFilmListType } from '@/api/SWAPITypes';
 
 function App() {
-  const dummyMovies = [
-    {
-      id: 1,
-      title: 'Some Dummy Movie',
-      openingText: 'This is the opening text of the movie',
-      releaseDate: '2021-05-18',
-    },
-    {
-      id: 2,
-      title: 'Some Dummy Movie 2',
-      openingText: 'This is the second opening text of the movie',
-      releaseDate: '2021-05-19',
-    },
-  ];
+  const [movies, setMovies] = useState<MovieType[]>([]);
+
+  // function fetchMoviesHandler() {
+  //   fetch('https://swapi.dev/api/films/')
+  //     .then((response) => {
+  //       return response.json();
+  //     })
+  //     .then((data) => {
+  //       setMovies(data.results);
+  //     });
+  // }
+
+  async function fetchMovieHandler() {
+    const response = await fetch('https://swapi.dev/api/films/');
+    const data: SWAPIFilmListType = await response.json();
+    const transformedMoviesData: MovieType[] = data.results.map(
+      (movieData) => ({
+        id: movieData.episode_id,
+        title: movieData.title,
+        releaseDate: movieData.release_date,
+        openingText: movieData.opening_crawl,
+      })
+    );
+    setMovies(transformedMoviesData);
+  }
 
   return (
     <>
       <section>
-        <button>Fetch Movies</button>
+        <button onClick={fetchMovieHandler}>Fetch Movies</button>
       </section>
       <section>
-        <MovieList movies={dummyMovies} />
+        <MovieList movies={movies} />
       </section>
     </>
-  )
+  );
 }
 
 export default App;
