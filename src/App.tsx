@@ -1,13 +1,13 @@
 import MovieList from './components/MovieList';
-import './App.css';
 import { useState } from 'react';
 import { MovieType } from '@/components/MovieType';
-import { SWAPIType, SWAPIFilmListType } from '@/api/SWAPITypes';
-import { getMovies } from '@/api/GetSWAPI'
+import { SWAPIFilmListType } from '@/api/SWAPITypes';
+import './App.css';
 
 function App() {
   const [movies, setMovies] = useState<MovieType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [error, setError] = useState<string | undefined>();
 
   // function fetchMoviesHandler() {
   //   fetch('https://swapi.dev/api/films/')
@@ -21,8 +21,31 @@ function App() {
 
   async function fetchMovieHandler() {
     setIsLoading(true);
-    const transformedMoviesData = await getMovies();
-    setMovies(transformedMoviesData);
+    setError(undefined);
+    try {
+      const response = await fetch('https://swapi.dev/api/film/');
+      // if (!response.ok) {
+      //   throw new Error('response is not ok');
+      // }
+      console.log(response);
+      const data: SWAPIFilmListType = await response.json();
+      const transformedMoviesData: MovieType[] = data.results.map(
+        (movieData) => ({
+          id: movieData.episode_id,
+          title: movieData.title,
+          releaseDate: movieData.release_date,
+          openingText: movieData.opening_crawl,
+        })
+      );
+      setMovies(transformedMoviesData);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log(err);
+        setError(err.message);
+      } else {
+        console.log('Unexpected Error');
+      }
+    }
     setIsLoading(false);
   }
 
@@ -30,6 +53,8 @@ function App() {
     <p>Loading...</p>
   ) : movies.length > 0 ? (
     <MovieList movies={movies} />
+  ) : error ? (
+    <p>{error}</p>
   ) : (
     <p>Found no movies.</p>
   );
@@ -39,9 +64,7 @@ function App() {
       <section>
         <button onClick={fetchMovieHandler}>Fetch Movies</button>
       </section>
-      <section>
-        {moviesContent}
-      </section>
+      <section>{moviesContent}</section>
     </>
   );
 }
