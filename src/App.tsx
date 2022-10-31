@@ -1,5 +1,5 @@
 import MovieList from './components/MovieList';
-import { useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { MovieType } from '@/components/MovieType';
 import { SWAPIFilmListType } from '@/api/SWAPITypes';
 import './App.css';
@@ -7,7 +7,7 @@ import './App.css';
 function App() {
   const [movies, setMovies] = useState<MovieType[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState<string | undefined>();
+  const [error, setError] = useState<string | undefined>(undefined);
 
   // function fetchMoviesHandler() {
   //   fetch('https://swapi.dev/api/films/')
@@ -19,14 +19,14 @@ function App() {
   //     });
   // }
 
-  async function fetchMovieHandler() {
+  const fetchMovieHandler = useCallback(async () => {
     setIsLoading(true);
     setError(undefined);
     try {
-      const response = await fetch('https://swapi.dev/api/film/');
-      // if (!response.ok) {
-      //   throw new Error('response is not ok');
-      // }
+      const response = await fetch('https://swapi.dev/api/films/');
+      if (!response.ok) {
+        throw new Error('response is not ok');
+      }
       console.log(response);
       const data: SWAPIFilmListType = await response.json();
       const transformedMoviesData: MovieType[] = data.results.map(
@@ -47,7 +47,11 @@ function App() {
       }
     }
     setIsLoading(false);
-  }
+  }, []);
+
+  useEffect(() => {
+    fetchMovieHandler();
+  }, [fetchMovieHandler]);
 
   const moviesContent = isLoading ? (
     <p>Loading...</p>
