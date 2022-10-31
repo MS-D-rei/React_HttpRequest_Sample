@@ -2,6 +2,7 @@ import MovieList from './components/MovieList';
 import { useCallback, useEffect, useState } from 'react';
 import { MovieType } from '@/components/MovieType';
 import { SWAPIFilmListType } from '@/api/SWAPITypes';
+import AddMovie from '@/components/AddMovie';
 import './App.css';
 
 function App() {
@@ -53,6 +54,10 @@ function App() {
     fetchMovieHandler();
   }, [fetchMovieHandler]);
 
+  const addMovieHandler = (movie: MovieType) => {
+    console.log(movie);
+  }
+
   const moviesContent = isLoading ? (
     <p>Loading...</p>
   ) : movies.length > 0 ? (
@@ -65,6 +70,9 @@ function App() {
 
   return (
     <>
+      <section>
+        <AddMovie onAddMovie={addMovieHandler} />
+      </section>
       <section>
         <button onClick={fetchMovieHandler}>Fetch Movies</button>
       </section>
