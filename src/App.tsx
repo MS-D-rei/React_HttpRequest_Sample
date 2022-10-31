@@ -24,21 +24,35 @@ function App() {
     setIsLoading(true);
     setError(undefined);
     try {
-      const response = await fetch('https://swapi.dev/api/films/');
+      // const response = await fetch('https://swapi.dev/api/films/');
+      const response = await fetch('https://react-httprequest-sample-default-rtdb.asia-southeast1.firebasedatabase.app/movies.json');
       if (!response.ok) {
         throw new Error('response is not ok');
       }
       console.log(response);
-      const data: SWAPIFilmListType = await response.json();
-      const transformedMoviesData: MovieType[] = data.results.map(
-        (movieData) => ({
-          id: movieData.episode_id,
-          title: movieData.title,
-          releaseDate: movieData.release_date,
-          openingText: movieData.opening_crawl,
-        })
-      );
-      setMovies(transformedMoviesData);
+      // const data: SWAPIFilmListType = await response.json();
+      // const transformedMoviesData: MovieType[] = data.results.map(
+      //   (movieData) => ({
+      //     id: movieData.episode_id,
+      //     title: movieData.title,
+      //     releaseDate: movieData.release_date,
+      //     openingText: movieData.opening_crawl,
+      //   })
+      // );
+      const data: MovieType[] = await response.json();
+      const loadedMovies = () => {
+        let moviesArray: MovieType[] = [];
+        for (let key in data) {
+          moviesArray.push({
+            id: key,
+            title: data[key].title,
+            openingText: data[key].openingText,
+            releaseDate: data[key].releaseDate,
+          })
+        }
+        return moviesArray;
+      }
+      setMovies(loadedMovies);
     } catch (err) {
       if (err instanceof Error) {
         console.log(err);
@@ -54,8 +68,16 @@ function App() {
     fetchMovieHandler();
   }, [fetchMovieHandler]);
 
-  const addMovieHandler = (movie: MovieType) => {
-    console.log(movie);
+  const addMovieHandler = async (movie: MovieType) => {
+    const response = await fetch('https://react-httprequest-sample-default-rtdb.asia-southeast1.firebasedatabase.app/movies.json', {
+      method: 'POST',
+      body: JSON.stringify(movie),
+      headers: {
+        'Context-Type': 'application/json',
+      }
+    });
+    const data = await response.json();
+    console.log(data);
   }
 
   const moviesContent = isLoading ? (

@@ -19,8 +19,8 @@ function AddMovie({ onAddMovie }: AddMovieProps) {
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
     if (titleRef.current && openningTextRef.current && releaseDateRef.current) {
-      const movie: MovieType = {
-        id: Math.random(),
+      const movie = {
+        // id: Math.random(), /* id will be added by firebase automatically */
         title: titleRef.current.value,
         openingText: openningTextRef.current.value,
         releaseDate: releaseDateRef.current.value,
