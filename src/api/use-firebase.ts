@@ -1,5 +1,5 @@
 import { MovieType } from '@/components/MovieType';
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 
 interface FirebaseRequestConfig {
   url: string;
@@ -22,7 +22,7 @@ export const useFirebase = (firebaseRequest: FirebaseRequestConfig) => {
   //     });
   // }
 
-  const sendRequest = async () => {
+  const sendRequest = useCallback(async () => {
     setIsLoading(true);
     setError(undefined);
     try {
@@ -30,7 +30,9 @@ export const useFirebase = (firebaseRequest: FirebaseRequestConfig) => {
       const response = await fetch(firebaseRequest.url, {
         method: firebaseRequest.method ? firebaseRequest.method : 'Get',
         headers: firebaseRequest.headers ? firebaseRequest.headers : {},
-        body: firebaseRequest.body ? JSON.stringify(firebaseRequest.body) : null,
+        body: firebaseRequest.body
+          ? JSON.stringify(firebaseRequest.body)
+          : null,
       });
       if (!response.ok) {
         throw new Error('response is not ok');
@@ -70,7 +72,7 @@ export const useFirebase = (firebaseRequest: FirebaseRequestConfig) => {
         setIsLoading(false);
       }
     }
-  };
+  }, [firebaseRequest]);
 
   return {
     isLoading,

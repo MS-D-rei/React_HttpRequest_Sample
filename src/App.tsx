@@ -75,16 +75,16 @@ function App() {
     sendRequest: fetchMovies,
   } = useFirebase(sendFirebaseRequestConfig);
 
-  const fetchMoviesHandler = async () => {
+  const fetchMoviesHandler = useCallback(async () => {
     const transformedMovies = await fetchMovies();
     if (transformedMovies) {
       setMovies(transformedMovies);
     }
-  }
+  }, []);
 
   useEffect(() => {
     fetchMoviesHandler();
-  }, []);
+  }, [fetchMoviesHandler]);
 
   const addMovieHandler = async (movie: MovieType) => {
     const response = await fetch(
