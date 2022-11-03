@@ -6,15 +6,21 @@ import {
   AddMovieFormTextarea,
 } from '@/components/AddMovieStyle';
 import { MovieType } from '@/components/MovieType';
+import { useFirebase } from '@/api/use-firebase';
 
-interface AddMovieProps {
-  onAddMovie: Function;
-}
+// interface AddMovieProps {
+//   onAddMovie: Function;
+// }
 
-function AddMovie({ onAddMovie }: AddMovieProps) {
+function AddMovie() {
   const titleRef = useRef<HTMLInputElement>(null);
   const openningTextRef = useRef<HTMLTextAreaElement>(null);
   const releaseDateRef = useRef<HTMLInputElement>(null);
+
+  const firebasePostConfig = {
+    url: 'https://react-httprequest-sample-default-rtdb.asia-southeast1.firebasedatabase.app/movies.json',
+  };
+  const { sendPostRequest } = useFirebase(firebasePostConfig);
 
   const submitHandler = (event: React.FormEvent) => {
     event.preventDefault();
@@ -25,7 +31,8 @@ function AddMovie({ onAddMovie }: AddMovieProps) {
         openingText: openningTextRef.current.value,
         releaseDate: releaseDateRef.current.value,
       };
-      onAddMovie(movie);
+      // onAddMovie(movie);
+      sendPostRequest(movie);
     }
   };
 
@@ -36,7 +43,9 @@ function AddMovie({ onAddMovie }: AddMovieProps) {
         <AddMovieFormInput id="title" type="text" ref={titleRef} />
       </AddMovieFormControlDiv>
       <AddMovieFormControlDiv>
-        <AddMovieFormLabel htmlFor="opening-text">Opening Text</AddMovieFormLabel>
+        <AddMovieFormLabel htmlFor="opening-text">
+          Opening Text
+        </AddMovieFormLabel>
         <AddMovieFormTextarea
           id="opening-text"
           rows={5}
@@ -44,7 +53,9 @@ function AddMovie({ onAddMovie }: AddMovieProps) {
         ></AddMovieFormTextarea>
       </AddMovieFormControlDiv>
       <AddMovieFormControlDiv>
-        <AddMovieFormLabel htmlFor="release-date">Release Date</AddMovieFormLabel>
+        <AddMovieFormLabel htmlFor="release-date">
+          Release Date
+        </AddMovieFormLabel>
         <AddMovieFormInput id="release-date" type="text" ref={releaseDateRef} />
       </AddMovieFormControlDiv>
       <button>Add Movie</button>

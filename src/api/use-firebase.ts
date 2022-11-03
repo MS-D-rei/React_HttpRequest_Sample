@@ -5,7 +5,7 @@ interface FirebaseRequestConfig {
   url: string;
   method?: string;
   headers?: HeadersInit;
-  body?: object;
+  body?: string;
 }
 
 export const useFirebase = (firebaseRequest: FirebaseRequestConfig) => {
@@ -22,7 +22,7 @@ export const useFirebase = (firebaseRequest: FirebaseRequestConfig) => {
   //     });
   // }
 
-  const sendRequest = useCallback(async () => {
+  const sendGetRequest = useCallback(async () => {
     setIsLoading(true);
     setError(undefined);
     try {
@@ -68,15 +68,37 @@ export const useFirebase = (firebaseRequest: FirebaseRequestConfig) => {
         setError(err.message);
         setIsLoading(false);
       } else {
-        console.log('Unexpected Error');
+        console.log(`Unexpected Error: ${err}`);
         setIsLoading(false);
       }
     }
   }, [firebaseRequest]);
 
+  const sendPostRequest = async (movie: MovieType) => {
+    try {
+      const response = await fetch(firebaseRequest.url, {
+        method: 'POST',
+        body: JSON.stringify(movie),
+        headers: {
+          'Context-Type': 'application/json',
+        },
+      });
+      console.log(response);
+      const data = await response.json();
+      console.log(data);
+    } catch (err) {
+      if (err instanceof Error) {
+        console.log(err);
+      } else {
+        console.log(`Unexpected Error: ${err}`);
+      }
+    }
+  };
+
   return {
     isLoading,
     error,
-    sendRequest,
+    sendGetRequest,
+    sendPostRequest,
   };
 };

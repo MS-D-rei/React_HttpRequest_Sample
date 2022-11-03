@@ -72,7 +72,7 @@ function App() {
   const {
     isLoading,
     error,
-    sendRequest: fetchMovies,
+    sendGetRequest: fetchMovies,
   } = useFirebase(sendFirebaseRequestConfig);
 
   const fetchMoviesHandler = useCallback(async () => {
@@ -86,20 +86,20 @@ function App() {
     fetchMoviesHandler();
   }, [fetchMoviesHandler]);
 
-  const addMovieHandler = async (movie: MovieType) => {
-    const response = await fetch(
-      'https://react-httprequest-sample-default-rtdb.asia-southeast1.firebasedatabase.app/movies.json',
-      {
-        method: 'POST',
-        body: JSON.stringify(movie),
-        headers: {
-          'Context-Type': 'application/json',
-        },
-      }
-    );
-    const data = await response.json();
-    console.log(data);
-  };
+  // const addMovieHandler = async (movie: MovieType) => {
+  //   const response = await fetch(
+  //     'https://react-httprequest-sample-default-rtdb.asia-southeast1.firebasedatabase.app/movies.json',
+  //     {
+  //       method: 'POST',
+  //       body: JSON.stringify(movie),
+  //       headers: {
+  //         'Context-Type': 'application/json',
+  //       },
+  //     }
+  //   );
+  //   const data = await response.json();
+  //   console.log(data);
+  // };
 
   const moviesContent = isLoading ? (
     <p>Loading...</p>
@@ -114,7 +114,7 @@ function App() {
   return (
     <>
       <section>
-        <AddMovie onAddMovie={addMovieHandler} />
+        <AddMovie />
       </section>
       <section>
         <button onClick={fetchMovies}>Fetch Movies</button>
